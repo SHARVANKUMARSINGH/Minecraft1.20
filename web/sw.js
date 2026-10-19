@@ -1,5 +1,5 @@
-/* Service Worker for Minecraft 1.20 (EaglercraftX PWA) */
-const CACHE_NAME = 'minecraft-1-20-v2';
+/* Service Worker for Minecraft 1.21 (Tricky Trials PWA) */
+const CACHE_NAME = 'minecraft-1-21-v4';
 
 // Assets to precache immediately on install
 const PRECACHE_ASSETS = [

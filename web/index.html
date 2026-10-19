@@ -2,20 +2,20 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<meta name="description" content="Play Minecraft 1.20.4 in your browser with EaglercraftX PWA" />
-		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.20, 1.20.4, pwa, browser game" />
-		<title>Minecraft 1.20.4</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+		<meta name="description" content="Play Minecraft 1.21 (Tricky Trials Edition) in your browser with full offline PWA support and Android touch controls" />
+		<meta name="keywords" content="minecraft, minecraft 1.21, tricky trials, browser minecraft, pwa, mobile minecraft, online minecraft" />
+		<title>Minecraft 1.21 - Tricky Trials</title>
 
 		<!-- PWA Manifest & App Config -->
 		<link rel="manifest" href="manifest.json" />
-		<meta name="theme-color" content="#1e1e1e" />
+		<meta name="theme-color" content="#c41e2a" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-		<meta name="apple-mobile-web-app-title" content="Minecraft 1.20" />
-		<meta name="application-name" content="Minecraft 1.20" />
+		<meta name="apple-mobile-web-app-title" content="Minecraft 1.21" />
+		<meta name="application-name" content="Minecraft 1.21" />
 
 		<!-- Icons -->
 		<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
@@ -26,11 +26,524 @@
 		<!-- OpenGraph / Social Metadata -->
 		<meta property="og:locale" content="en-US" />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Minecraft 1.20.4 (EaglercraftX)" />
-		<meta property="og:description" content="Play Minecraft 1.20.4 in your browser" />
+		<meta property="og:title" content="Minecraft 1.21 (Tricky Trials)" />
+		<meta property="og:description" content="Play Minecraft 1.21 directly in your browser with Android touch controls and offline support" />
 		<meta property="og:image" content="icons/icon-512.png" />
 
-		<script type="text/javascript" src="classes.js"></script>
+		<style>
+			* {
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+			html, body {
+				margin: 0;
+				padding: 0;
+				width: 100vw;
+				height: 100vh;
+				overflow: hidden;
+				background-color: #0c0a09;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+				touch-action: none;
+			}
+			#game_frame {
+				width: 100vw;
+				height: 100vh;
+				position: absolute;
+				top: 0;
+				left: 0;
+				background: #000;
+				z-index: 1;
+			}
+			#game_frame canvas {
+				width: 100% !important;
+				height: 100% !important;
+				display: block;
+			}
+
+			/* ========================================================= */
+			/* 🔴 MOJANG STUDIOS 1.21 SPLASH / LOADING SCREEN             */
+			/* ========================================================= */
+			#loading_screen {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: linear-gradient(135deg, #c41e2a 0%, #991b1b 100%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				z-index: 99999;
+				transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			#loading_screen.hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+			.mojang-logo-wrap {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin-bottom: 30px;
+			}
+			.mojang-badge {
+				font-size: 38px;
+				font-weight: 900;
+				letter-spacing: 6px;
+				color: #ffffff;
+				text-transform: uppercase;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+			.mojang-sub {
+				font-size: 13px;
+				letter-spacing: 5px;
+				color: rgba(255, 255, 255, 0.85);
+				font-weight: 700;
+				margin-top: 4px;
+			}
+			.version-tag {
+				display: inline-block;
+				margin-top: 14px;
+				padding: 5px 14px;
+				background: rgba(0, 0, 0, 0.35);
+				border: 1px solid rgba(245, 158, 11, 0.6);
+				border-radius: 20px;
+				font-size: 13px;
+				font-weight: 700;
+				color: #fbbf24;
+				letter-spacing: 1px;
+			}
+			.progress-box {
+				width: 280px;
+				margin-top: 36px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+			}
+			.progress-track {
+				width: 100%;
+				height: 8px;
+				background: rgba(0, 0, 0, 0.4);
+				border-radius: 4px;
+				overflow: hidden;
+				box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+			}
+			.progress-fill {
+				width: 15%;
+				height: 100%;
+				background: linear-gradient(90deg, #f59e0b, #fbbf24);
+				border-radius: 4px;
+				transition: width 0.3s ease;
+				box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+			}
+			.loading-status {
+				font-size: 12px;
+				color: rgba(255, 255, 255, 0.75);
+				letter-spacing: 0.5px;
+			}
+
+			/* ========================================================= */
+			/* 🎛️ HUD CONTROLS & MODE SWITCHER                           */
+			/* ========================================================= */
+			#hud_top {
+				position: fixed;
+				top: 12px;
+				left: 12px;
+				right: 12px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				z-index: 10000;
+				pointer-events: none;
+			}
+			.hud-btn-group {
+				display: flex;
+				gap: 8px;
+				pointer-events: auto;
+			}
+			.hud-pill {
+				background: rgba(24, 24, 27, 0.85);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 24px;
+				padding: 4px 6px;
+				display: flex;
+				gap: 4px;
+				backdrop-filter: blur(8px);
+				box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+			}
+			.hud-mode-opt {
+				background: transparent;
+				border: none;
+				color: #a1a1aa;
+				font-size: 12px;
+				font-weight: 700;
+				padding: 6px 12px;
+				border-radius: 18px;
+				cursor: pointer;
+				transition: all 0.2s;
+			}
+			.hud-mode-opt.active {
+				background: #d97706;
+				color: #ffffff;
+				box-shadow: 0 2px 6px rgba(217, 119, 6, 0.5);
+			}
+			.hud-btn {
+				background: rgba(24, 24, 27, 0.85);
+				border: 1px solid rgba(255, 255, 255, 0.25);
+				color: #f4f4f5;
+				width: 38px;
+				height: 38px;
+				border-radius: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 16px;
+				cursor: pointer;
+				backdrop-filter: blur(8px);
+				box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+				transition: all 0.15s;
+			}
+			.hud-btn:active {
+				transform: scale(0.92);
+				background: #d97706;
+			}
+
+			/* ========================================================= */
+			/* 📱 ANDROID TOUCH CONTROLS OVERLAY                         */
+			/* ========================================================= */
+			#android_controls {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				z-index: 9999;
+				pointer-events: none;
+			}
+			#android_controls.disabled {
+				display: none !important;
+			}
+
+			/* Virtual Joystick (Left) */
+			#joystick_wrapper {
+				position: absolute;
+				bottom: 35px;
+				left: 35px;
+				width: 140px;
+				height: 140px;
+				pointer-events: auto;
+				touch-action: none;
+			}
+			#joystick_base {
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle, rgba(24, 24, 27, 0.55) 0%, rgba(15, 15, 18, 0.75) 100%);
+				border: 2.5px solid rgba(255, 255, 255, 0.3);
+				border-radius: 50%;
+				position: relative;
+				box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+				backdrop-filter: blur(4px);
+			}
+			/* Arrow guides inside joystick base */
+			.joy-arrow {
+				position: absolute;
+				color: rgba(255, 255, 255, 0.35);
+				font-size: 13px;
+				font-weight: 900;
+			}
+			.joy-up { top: 6px; left: 50%; transform: translateX(-50%); }
+			.joy-down { bottom: 6px; left: 50%; transform: translateX(-50%); }
+			.joy-left { left: 8px; top: 50%; transform: translateY(-50%); }
+			.joy-right { right: 8px; top: 50%; transform: translateY(-50%); }
+
+			#joystick_knob {
+				width: 58px;
+				height: 58px;
+				background: radial-gradient(circle, #f4f4f5 0%, #a1a1aa 100%);
+				border: 2px solid #ffffff;
+				border-radius: 50%;
+				position: absolute;
+				top: calc(50% - 29px);
+				left: calc(50% - 29px);
+				box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				pointer-events: none;
+				transition: transform 0.05s ease-out;
+			}
+			#joystick_knob::after {
+				content: '';
+				width: 14px;
+				height: 14px;
+				background: #52525b;
+				border-radius: 50%;
+			}
+
+			/* Right Touch Camera Look Zone */
+			#touch_look_zone {
+				position: absolute;
+				top: 55px;
+				right: 0;
+				width: 60vw;
+				bottom: 160px;
+				pointer-events: auto;
+				touch-action: none;
+			}
+
+			/* Right Action Buttons */
+			#action_buttons {
+				position: absolute;
+				bottom: 30px;
+				right: 25px;
+				pointer-events: auto;
+				display: grid;
+				grid-template-columns: repeat(3, 56px);
+				grid-template-rows: repeat(2, 56px);
+				gap: 12px;
+				align-items: center;
+				justify-items: center;
+			}
+			.act-btn {
+				background: rgba(24, 24, 27, 0.72);
+				border: 2px solid rgba(255, 255, 255, 0.35);
+				border-radius: 50%;
+				color: #ffffff;
+				font-size: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+				backdrop-filter: blur(6px);
+				transition: all 0.1s;
+				touch-action: none;
+			}
+			.act-btn span {
+				font-size: 9px;
+				font-weight: 800;
+				letter-spacing: 0.5px;
+				text-transform: uppercase;
+				margin-top: 1px;
+			}
+			.act-btn:active, .act-btn.active {
+				transform: scale(0.90);
+				background: #d97706;
+				border-color: #fbbf24;
+				box-shadow: 0 0 15px rgba(245, 158, 11, 0.7);
+			}
+
+			/* Jump button (prominent) */
+			#btn_jump {
+				width: 66px;
+				height: 66px;
+				grid-column: 3;
+				grid-row: 2;
+				border-color: rgba(255, 255, 255, 0.5);
+			}
+			#btn_attack {
+				width: 58px;
+				height: 58px;
+				grid-column: 2;
+				grid-row: 2;
+			}
+			#btn_use {
+				width: 58px;
+				height: 58px;
+				grid-column: 2;
+				grid-row: 1;
+			}
+			#btn_sneak {
+				width: 52px;
+				height: 52px;
+				grid-column: 1;
+				grid-row: 2;
+			}
+			#btn_sneak.active {
+				background: #0284c7;
+				border-color: #38bdf8;
+			}
+			#btn_drop {
+				width: 48px;
+				height: 48px;
+				grid-column: 3;
+				grid-row: 1;
+			}
+
+			/* Hotbar touch slots */
+			#hotbar_bar {
+				position: absolute;
+				bottom: 12px;
+				left: 50%;
+				transform: translateX(-50%);
+				display: flex;
+				gap: 4px;
+				background: rgba(15, 15, 18, 0.8);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 8px;
+				padding: 4px 6px;
+				pointer-events: auto;
+				backdrop-filter: blur(6px);
+			}
+			.hotbar-btn {
+				width: 30px;
+				height: 32px;
+				background: rgba(39, 39, 42, 0.8);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 4px;
+				color: #e4e4e7;
+				font-size: 13px;
+				font-weight: 800;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.15s;
+			}
+			.hotbar-btn:active, .hotbar-btn.active {
+				background: #d97706;
+				color: #ffffff;
+			}
+
+			/* PWA Install Banner */
+			#pwa_banner {
+				display: none;
+				position: fixed;
+				bottom: 24px;
+				right: 24px;
+				z-index: 100000;
+				background: rgba(24, 24, 27, 0.94);
+				border: 1px solid #d97706;
+				border-radius: 12px;
+				padding: 10px 16px;
+				color: #fff;
+				align-items: center;
+				gap: 12px;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+			}
+			.pwa-inst-btn {
+				background: #d97706;
+				color: #fff;
+				border: none;
+				border-radius: 6px;
+				padding: 7px 14px;
+				font-size: 12px;
+				font-weight: 700;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 🔴 1.21 MOJANG STUDIOS SPLASH / LOADING SCREEN -->
+		<div id="loading_screen">
+			<div class="mojang-logo-wrap">
+				<div class="mojang-badge">
+					<span>MOJANG</span>
+				</div>
+				<div class="mojang-sub">STUDIOS</div>
+				<div class="version-tag">⚔️ 1.21 TRICKY TRIALS</div>
+			</div>
+			<div class="progress-box">
+				<div class="progress-track">
+					<div id="loading_bar" class="progress-fill"></div>
+				</div>
+				<span id="loading_txt" class="loading-status">Loading game resources...</span>
+			</div>
+		</div>
+
+		<!-- 🎛️ TOP HUD & CONTROLS MODE SELECTOR -->
+		<div id="hud_top">
+			<!-- Mode switch: Android Mobile vs Desktop -->
+			<div class="hud-pill">
+				<button id="mode_android" class="hud-mode-opt active">📱 Mobile</button>
+				<button id="mode_desktop" class="hud-mode-opt">💻 Desktop</button>
+			</div>
+
+			<!-- Quick Utilities -->
+			<div class="hud-btn-group">
+				<button id="btn_f5" class="hud-btn" title="Toggle Perspective (F5)">🔄</button>
+				<button id="btn_chat" class="hud-btn" title="Open Chat (T)">💬</button>
+				<button id="btn_inv" class="hud-btn" title="Inventory (E)">🎒</button>
+				<button id="btn_pause" class="hud-btn" title="Pause / Menu (Esc)">⏸️</button>
+			</div>
+		</div>
+
+		<!-- 📱 ANDROID TOUCH CONTROLS -->
+		<div id="android_controls">
+			<!-- Left Virtual Joystick -->
+			<div id="joystick_wrapper">
+				<div id="joystick_base">
+					<span class="joy-arrow joy-up">▲</span>
+					<span class="joy-arrow joy-down">▼</span>
+					<span class="joy-arrow joy-left">◀</span>
+					<span class="joy-arrow joy-right">▶</span>
+					<div id="joystick_knob"></div>
+				</div>
+			</div>
+
+			<!-- Right Camera Pan Look Zone -->
+			<div id="touch_look_zone"></div>
+
+			<!-- Right Action Buttons -->
+			<div id="action_buttons">
+				<button id="btn_drop" class="act-btn" title="Drop Item (Q)">
+					⬇️
+					<span>Drop</span>
+				</button>
+				<button id="btn_use" class="act-btn" title="Place / Use (Right Click)">
+					🧱
+					<span>Place</span>
+				</button>
+				<button id="btn_sneak" class="act-btn" title="Sneak / Crouch (Shift)">
+					🛡️
+					<span>Sneak</span>
+				</button>
+				<button id="btn_attack" class="act-btn" title="Mine / Attack (Left Click)">
+					⚔️
+					<span>Mine</span>
+				</button>
+				<button id="btn_jump" class="act-btn" title="Jump (Space)">
+					⬆️
+					<span>Jump</span>
+				</button>
+			</div>
+
+			<!-- Hotbar Quick Select (1 to 9) -->
+			<div id="hotbar_bar">
+				<button class="hotbar-btn" data-slot="1">1</button>
+				<button class="hotbar-btn" data-slot="2">2</button>
+				<button class="hotbar-btn" data-slot="3">3</button>
+				<button class="hotbar-btn" data-slot="4">4</button>
+				<button class="hotbar-btn" data-slot="5">5</button>
+				<button class="hotbar-btn" data-slot="6">6</button>
+				<button class="hotbar-btn" data-slot="7">7</button>
+				<button class="hotbar-btn" data-slot="8">8</button>
+				<button class="hotbar-btn" data-slot="9">9</button>
+			</div>
+		</div>
+
+		<!-- 🎮 GAME CONTAINER -->
+		<div id="game_frame"></div>
+
+		<!-- 📲 PWA INSTALL PROMPT -->
+		<div id="pwa_banner">
+			<img src="icons/icon-192.png" width="36" height="36" style="border-radius:8px;" alt="Minecraft 1.21" />
+			<div style="display:flex;flex-direction:column;">
+				<span style="font-weight:700;font-size:13px;">Install Minecraft 1.21</span>
+				<span style="font-size:11px;color:#a1a1aa;">Play offline as a native app</span>
+			</div>
+			<button id="btn_install_pwa" class="pwa-inst-btn">Install</button>
+			<button id="btn_close_pwa" style="background:transparent;border:none;color:#71717a;cursor:pointer;font-size:16px;">✕</button>
+		</div>
+
+		<!-- SCRIPTS -->
 		<script type="text/javascript">
 			"use strict";
 
@@ -38,19 +551,415 @@
 			if ("serviceWorker" in navigator) {
 				window.addEventListener("load", () => {
 					navigator.serviceWorker.register("sw.js", { scope: "./" })
-						.then(reg => {
-							console.log("[PWA] Service Worker registered with scope:", reg.scope);
-						})
-						.catch(err => {
-							console.warn("[PWA] Service Worker registration failed:", err);
-						});
+						.then(reg => console.log("[PWA] Service Worker registered:", reg.scope))
+						.catch(err => console.warn("[PWA] Service Worker error:", err));
 				});
 			}
 
+			// PWA Install prompt handling
+			let pwaPrompt = null;
+			window.addEventListener('beforeinstallprompt', (e) => {
+				e.preventDefault();
+				pwaPrompt = e;
+				const banner = document.getElementById('pwa_banner');
+				if (banner) banner.style.display = 'flex';
+			});
+			document.getElementById('btn_install_pwa')?.addEventListener('click', async () => {
+				if (pwaPrompt) {
+					pwaPrompt.prompt();
+					await pwaPrompt.userChoice;
+					pwaPrompt = null;
+					document.getElementById('pwa_banner').style.display = 'none';
+				}
+			});
+			document.getElementById('btn_close_pwa')?.addEventListener('click', () => {
+				document.getElementById('pwa_banner').style.display = 'none';
+			});
+
+			/* ========================================================= */
+			/* 🕹️ INPUT CONTROLLER: KEYBOARD & MOUSE SYNTHESIS           */
+			/* ========================================================= */
+			function sendKeyEvent(type, keyCode, code, key) {
+				const ev = new KeyboardEvent(type, {
+					key: key,
+					code: code,
+					keyCode: keyCode,
+					which: keyCode,
+					bubbles: true,
+					cancelable: true
+				});
+				Object.defineProperty(ev, 'keyCode', { get: () => keyCode });
+				Object.defineProperty(ev, 'which', { get: () => keyCode });
+				window.dispatchEvent(ev);
+			}
+
+			function pressKey(keyCode, code, key) {
+				sendKeyEvent('keydown', keyCode, code, key);
+			}
+			function releaseKey(keyCode, code, key) {
+				sendKeyEvent('keyup', keyCode, code, key);
+			}
+
+			function getGameCanvas() {
+				return document.querySelector('#game_frame canvas');
+			}
+
+			function sendMouseEvent(type, button) {
+				const canvas = getGameCanvas();
+				if (!canvas) return;
+				const ev = new MouseEvent(type, {
+					button: button,
+					buttons: button === 0 ? 1 : (button === 2 ? 2 : 4),
+					bubbles: true,
+					cancelable: true
+				});
+				canvas.dispatchEvent(ev);
+			}
+
+			function sendMouseMove(movementX, movementY) {
+				const canvas = getGameCanvas();
+				if (!canvas) return;
+				const ev = new MouseEvent('mousemove', {
+					movementX: movementX,
+					movementY: movementY,
+					bubbles: true,
+					cancelable: true
+				});
+				canvas.dispatchEvent(ev);
+			}
+
+			/* ========================================================= */
+			/* 🎮 VIRTUAL JOYSTICK (Bedrock Style)                       */
+			/* ========================================================= */
+			const joyWrapper = document.getElementById('joystick_wrapper');
+			const joyBase = document.getElementById('joystick_base');
+			const joyKnob = document.getElementById('joystick_knob');
+
+			let joyTouchId = null;
+			let joyCenterX = 0;
+			let joyCenterY = 0;
+			const maxRadius = 45;
+
+			const currentMoveKeys = { w: false, s: false, a: false, d: false, sprint: false };
+
+			function updateMoveKeys(w, s, a, d, sprint) {
+				if (w !== currentMoveKeys.w) {
+					w ? pressKey(87, 'KeyW', 'w') : releaseKey(87, 'KeyW', 'w');
+					currentMoveKeys.w = w;
+				}
+				if (s !== currentMoveKeys.s) {
+					s ? pressKey(83, 'KeyS', 's') : releaseKey(83, 'KeyS', 's');
+					currentMoveKeys.s = s;
+				}
+				if (a !== currentMoveKeys.a) {
+					a ? pressKey(65, 'KeyA', 'a') : releaseKey(65, 'KeyA', 'a');
+					currentMoveKeys.a = a;
+				}
+				if (d !== currentMoveKeys.d) {
+					d ? pressKey(68, 'KeyD', 'd') : releaseKey(68, 'KeyD', 'd');
+					currentMoveKeys.d = d;
+				}
+				if (sprint !== currentMoveKeys.sprint) {
+					sprint ? pressKey(17, 'ControlLeft', 'Control') : releaseKey(17, 'ControlLeft', 'Control');
+					currentMoveKeys.sprint = sprint;
+				}
+			}
+
+			function resetJoystick() {
+				joyTouchId = null;
+				joyKnob.style.transform = 'translate(0px, 0px)';
+				updateMoveKeys(false, false, false, false, false);
+			}
+
+			joyWrapper.addEventListener('touchstart', (e) => {
+				e.preventDefault();
+				if (joyTouchId !== null) return;
+				const t = e.changedTouches[0];
+				joyTouchId = t.identifier;
+				const rect = joyBase.getBoundingClientRect();
+				joyCenterX = rect.left + rect.width / 2;
+				joyCenterY = rect.top + rect.height / 2;
+				navigator.vibrate?.(10);
+			}, { passive: false });
+
+			window.addEventListener('touchmove', (e) => {
+				if (joyTouchId === null) return;
+				for (let i = 0; i < e.changedTouches.length; i++) {
+					const t = e.changedTouches[i];
+					if (t.identifier === joyTouchId) {
+						e.preventDefault();
+						const dx = t.clientX - joyCenterX;
+						const dy = t.clientY - joyCenterY;
+						const dist = Math.hypot(dx, dy);
+						const clampedDist = Math.min(dist, maxRadius);
+						const knobX = dist > 0 ? (dx / dist) * clampedDist : 0;
+						const knobY = dist > 0 ? (dy / dist) * clampedDist : 0;
+						joyKnob.style.transform = `translate(${knobX}px, ${knobY}px)`;
+
+						// Thresholds for 8-way movement
+						const deadzone = 12;
+						let w = false, s = false, a = false, d = false, sprint = false;
+
+						if (dist > deadzone) {
+							if (dy < -deadzone) w = true;
+							if (dy > deadzone) s = true;
+							if (dx < -deadzone) a = true;
+							if (dx > deadzone) d = true;
+							// Auto-sprint when pushed near maximum forward
+							if (w && clampedDist > 38 && Math.abs(dy) > Math.abs(dx)) {
+								sprint = true;
+							}
+						}
+						updateMoveKeys(w, s, a, d, sprint);
+						break;
+					}
+				}
+			}, { passive: false });
+
+			window.addEventListener('touchend', (e) => {
+				if (joyTouchId === null) return;
+				for (let i = 0; i < e.changedTouches.length; i++) {
+					if (e.changedTouches[i].identifier === joyTouchId) {
+						resetJoystick();
+						break;
+					}
+				}
+			});
+			window.addEventListener('touchcancel', (e) => {
+				if (joyTouchId === null) return;
+				for (let i = 0; i < e.changedTouches.length; i++) {
+					if (e.changedTouches[i].identifier === joyTouchId) {
+						resetJoystick();
+						break;
+					}
+				}
+			});
+
+			/* ========================================================= */
+			/* 👁️ TOUCH CAMERA LOOK PAN                                  */
+			/* ========================================================= */
+			const lookZone = document.getElementById('touch_look_zone');
+			let lookTouchId = null;
+			let lastLookX = 0;
+			let lastLookY = 0;
+			const lookSensitivity = 1.35;
+
+			lookZone.addEventListener('touchstart', (e) => {
+				e.preventDefault();
+				if (lookTouchId !== null) return;
+				const t = e.changedTouches[0];
+				lookTouchId = t.identifier;
+				lastLookX = t.clientX;
+				lastLookY = t.clientY;
+			}, { passive: false });
+
+			lookZone.addEventListener('touchmove', (e) => {
+				if (lookTouchId === null) return;
+				for (let i = 0; i < e.changedTouches.length; i++) {
+					const t = e.changedTouches[i];
+					if (t.identifier === lookTouchId) {
+						e.preventDefault();
+						const dx = (t.clientX - lastLookX) * lookSensitivity;
+						const dy = (t.clientY - lastLookY) * lookSensitivity;
+						lastLookX = t.clientX;
+						lastLookY = t.clientY;
+						sendMouseMove(dx, dy);
+						break;
+					}
+				}
+			}, { passive: false });
+
+			function endLook(e) {
+				if (lookTouchId === null) return;
+				for (let i = 0; i < e.changedTouches.length; i++) {
+					if (e.changedTouches[i].identifier === lookTouchId) {
+						lookTouchId = null;
+						break;
+					}
+				}
+			}
+			lookZone.addEventListener('touchend', endLook);
+			lookZone.addEventListener('touchcancel', endLook);
+
+			/* ========================================================= */
+			/* ⚔️ ACTION BUTTONS BINDINGS                                */
+			/* ========================================================= */
+			function bindTouchButton(elemId, onDown, onUp) {
+				const el = document.getElementById(elemId);
+				if (!el) return;
+				el.addEventListener('pointerdown', (e) => {
+					e.preventDefault();
+					el.classList.add('active');
+					navigator.vibrate?.(12);
+					if (onDown) onDown();
+				});
+				const handleUp = (e) => {
+					el.classList.remove('active');
+					if (onUp) onUp();
+				};
+				el.addEventListener('pointerup', handleUp);
+				el.addEventListener('pointercancel', handleUp);
+			}
+
+			// Jump (Spacebar)
+			bindTouchButton('btn_jump',
+				() => pressKey(32, 'Space', ' '),
+				() => releaseKey(32, 'Space', ' ')
+			);
+
+			// Mine / Attack (Left Click)
+			bindTouchButton('btn_attack',
+				() => sendMouseEvent('mousedown', 0),
+				() => sendMouseEvent('mouseup', 0)
+			);
+
+			// Place / Use (Right Click)
+			bindTouchButton('btn_use',
+				() => sendMouseEvent('mousedown', 2),
+				() => sendMouseEvent('mouseup', 2)
+			);
+
+			// Sneak / Crouch (Shift Toggle)
+			let sneakActive = false;
+			const btnSneak = document.getElementById('btn_sneak');
+			btnSneak?.addEventListener('pointerdown', (e) => {
+				e.preventDefault();
+				sneakActive = !sneakActive;
+				if (sneakActive) {
+					btnSneak.classList.add('active');
+					pressKey(16, 'ShiftLeft', 'Shift');
+				} else {
+					btnSneak.classList.remove('active');
+					releaseKey(16, 'ShiftLeft', 'Shift');
+				}
+				navigator.vibrate?.(15);
+			});
+
+			// Drop Item (Q)
+			bindTouchButton('btn_drop',
+				() => pressKey(81, 'KeyQ', 'q'),
+				() => releaseKey(81, 'KeyQ', 'q')
+			);
+
+			// Inventory (E)
+			bindTouchButton('btn_inv',
+				() => {
+					pressKey(69, 'KeyE', 'e');
+					setTimeout(() => releaseKey(69, 'KeyE', 'e'), 60);
+				}
+			);
+
+			// Chat (T)
+			bindTouchButton('btn_chat',
+				() => {
+					pressKey(84, 'KeyT', 't');
+					setTimeout(() => releaseKey(84, 'KeyT', 't'), 60);
+				}
+			);
+
+			// Pause / Menu (Escape)
+			bindTouchButton('btn_pause',
+				() => {
+					pressKey(27, 'Escape', 'Escape');
+					setTimeout(() => releaseKey(27, 'Escape', 'Escape'), 60);
+				}
+			);
+
+			// Perspective (F5)
+			bindTouchButton('btn_f5',
+				() => {
+					pressKey(116, 'F5', 'F5');
+					setTimeout(() => releaseKey(116, 'F5', 'F5'), 60);
+				}
+			);
+
+			// Hotbar slot selection (1..9)
+			document.querySelectorAll('.hotbar-btn').forEach(btn => {
+				btn.addEventListener('pointerdown', (e) => {
+					e.preventDefault();
+					const slot = parseInt(btn.dataset.slot, 10);
+					const keyCode = 48 + slot;
+					pressKey(keyCode, `Digit${slot}`, `${slot}`);
+					setTimeout(() => releaseKey(keyCode, `Digit${slot}`, `${slot}`), 60);
+					document.querySelectorAll('.hotbar-btn').forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					navigator.vibrate?.(10);
+				});
+			});
+
+			/* ========================================================= */
+			/* 📱 / 💻 CONTROLS MODE SWITCHER                            */
+			/* ========================================================= */
+			const modeAndroidBtn = document.getElementById('mode_android');
+			const modeDesktopBtn = document.getElementById('mode_desktop');
+			const touchOverlay = document.getElementById('android_controls');
+
+			function setControlsMode(mode) {
+				if (mode === 'android') {
+					modeAndroidBtn.classList.add('active');
+					modeDesktopBtn.classList.remove('active');
+					touchOverlay.classList.remove('disabled');
+					localStorage.setItem('mc_controls_mode', 'android');
+				} else {
+					modeDesktopBtn.classList.add('active');
+					modeAndroidBtn.classList.remove('active');
+					touchOverlay.classList.add('disabled');
+					localStorage.setItem('mc_controls_mode', 'desktop');
+					resetJoystick();
+				}
+			}
+
+			modeAndroidBtn?.addEventListener('click', () => setControlsMode('android'));
+			modeDesktopBtn?.addEventListener('click', () => setControlsMode('desktop'));
+
+			// Auto-detect mode based on touch capability or saved preference
+			const savedMode = localStorage.getItem('mc_controls_mode');
+			if (savedMode) {
+				setControlsMode(savedMode);
+			} else {
+				const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+				setControlsMode(isTouchDevice ? 'android' : 'desktop');
+			}
+
+			/* ========================================================= */
+			/* 🚀 MINECRAFT 1.21 ENGINE INITIALIZATION                  */
+			/* ========================================================= */
 			window.addEventListener("load", () => {
-				if(document.location.href.startsWith("file:")) {
-					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
-				}else {
+				const loadingBar = document.getElementById('loading_bar');
+				const loadingTxt = document.getElementById('loading_txt');
+				const splashScreen = document.getElementById('loading_screen');
+
+				// Animate loading bar progress
+				let progress = 15;
+				const progressInterval = setInterval(() => {
+					progress += Math.floor(Math.random() * 15) + 5;
+					if (progress > 85) progress = 85;
+					if (loadingBar) loadingBar.style.width = `${progress}%`;
+					if (loadingTxt) {
+						if (progress > 60) loadingTxt.innerText = "Initializing 1.21 Tricky Trials world...";
+						else if (progress > 30) loadingTxt.innerText = "Loading textures & shaders...";
+					}
+				}, 200);
+
+				// Observer to hide splash screen as soon as Minecraft canvas renders
+				const observer = new MutationObserver(() => {
+					const canvas = document.querySelector('#game_frame canvas');
+					if (canvas) {
+						clearInterval(progressInterval);
+						if (loadingBar) loadingBar.style.width = '100%';
+						if (loadingTxt) loadingTxt.innerText = "Ready!";
+						setTimeout(() => {
+							splashScreen?.classList.add('hidden');
+							setTimeout(() => splashScreen?.remove(), 800);
+						}, 350);
+						observer.disconnect();
+					}
+				});
+				observer.observe(document.getElementById('game_frame'), { childList: true, subtree: true });
+
+				if (document.location.href.startsWith("file:")) {
+					alert("Please run via HTTP server (e.g. python3 -m http.server 8000)");
+				} else {
 					const relayId = Math.floor(Math.random() * 3);
 					window.eaglercraftXOpts = {
 						demoMode: false,
@@ -60,27 +969,27 @@
 						worldsDB: "worlds",
 						logInvalidCerts: true,
 						servers: [
-							{ addr: "ws" + window.location.href.slice(4), name: "EaglercraftX 1.20 Server" }
+							{ addr: "ws" + window.location.href.slice(4), name: "Minecraft 1.21 Server" }
 						],
 						relays: [
-							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
-							{ addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId == 1 },
-							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId == 2 }
+							{ addr: "wss://relay.deev.is/", comment: "Relay #1", primary: relayId === 0 },
+							{ addr: "wss://relay.lax1dude.net/", comment: "Relay #2", primary: relayId === 1 },
+							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "Relay #3", primary: relayId === 2 }
 						]
 					};
-					
+
 					var q = window.location.search;
-					if(typeof q === "string" && q.startsWith("?")) {
+					if (typeof q === "string" && q.startsWith("?")) {
 						q = new URLSearchParams(q);
 						var s = q.get("server");
-						if(s) window.eaglercraftXOpts.joinServer = s;
+						if (s) window.eaglercraftXOpts.joinServer = s;
 					}
-					
+
 					main();
 				}
 			});
 		</script>
-	</head>
-	<body style="margin:0px;width:100vw;height:100vh;overflow:hidden;background:#000000;" id="game_frame">
+		<!-- Minecraft Engine Core Classes -->
+		<script type="text/javascript" src="classes.js"></script>
 	</body>
 </html>

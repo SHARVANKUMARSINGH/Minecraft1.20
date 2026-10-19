@@ -1,13 +1,13 @@
 {
-  "name": "Minecraft 1.20.4",
-  "short_name": "Minecraft",
-  "description": "Play Minecraft 1.20.4 in your browser with EaglercraftX",
+  "name": "Minecraft 1.21 - Tricky Trials",
+  "short_name": "Minecraft 1.21",
+  "description": "Play Minecraft 1.21 in your browser with offline PWA support and Android touch controls",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#121212",
-  "theme_color": "#1e1e1e",
+  "theme_color": "#c41e2a",
   "categories": [
     "games",
     "entertainment"
