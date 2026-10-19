@@ -1,19 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="Eaglercraft 1.20 test directory HTML page" />
-		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.20" />
-		<title>EaglercraftX 1.20.4</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="description" content="Play Minecraft 1.20.4 in your browser with EaglercraftX PWA" />
+		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.20, 1.20.4, pwa, browser game" />
+		<title>Minecraft 1.20.4</title>
+
+		<!-- PWA Manifest & App Config -->
+		<link rel="manifest" href="manifest.json" />
+		<meta name="theme-color" content="#1e1e1e" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Minecraft 1.20" />
+		<meta name="application-name" content="Minecraft 1.20" />
+
+		<!-- Icons -->
+		<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
+		<link rel="shortcut icon" href="favicon.png" />
+		<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+		<!-- OpenGraph / Social Metadata -->
 		<meta property="og:locale" content="en-US" />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Eaglercraft 1.20" />
-		<meta property="og:description" content="test directory HTML page" />
-		<link type="image/png" rel="shortcut icon" href="favicon.png" />
+		<meta property="og:title" content="Minecraft 1.20.4 (EaglercraftX)" />
+		<meta property="og:description" content="Play Minecraft 1.20.4 in your browser" />
+		<meta property="og:image" content="icons/icon-512.png" />
+
 		<script type="text/javascript" src="classes.js"></script>
 		<script type="text/javascript">
 			"use strict";
+
+			// Register PWA Service Worker
+			if ("serviceWorker" in navigator) {
+				window.addEventListener("load", () => {
+					navigator.serviceWorker.register("sw.js", { scope: "./" })
+						.then(reg => {
+							console.log("[PWA] Service Worker registered with scope:", reg.scope);
+						})
+						.catch(err => {
+							console.warn("[PWA] Service Worker registration failed:", err);
+						});
+				});
+			}
+
 			window.addEventListener("load", () => {
 				if(document.location.href.startsWith("file:")) {
 					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
@@ -27,7 +60,7 @@
 						worldsDB: "worlds",
 						logInvalidCerts: true,
 						servers: [
-							{ addr: "ws" + window.location.href.slice(4), name: "EaglercraftX  1.19 Server" }
+							{ addr: "ws" + window.location.href.slice(4), name: "EaglercraftX 1.20 Server" }
 						],
 						relays: [
 							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId == 0 },
@@ -48,6 +81,6 @@
 			});
 		</script>
 	</head>
-	<body style="margin:0px;width:100vw;height:100vh;overflow:hidden;" id="game_frame">
+	<body style="margin:0px;width:100vw;height:100vh;overflow:hidden;background:#000000;" id="game_frame">
 	</body>
 </html>

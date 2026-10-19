@@ -1,8 +1,37 @@
-# Eaglercraft 1.20.4
+# Minecraft 1.20.4 (EaglercraftX PWA)
 
-### Play real Minecraft 1.20.4 in your browser
+[![Deploy to GitHub Pages](https://github.com/SHARVANKUMARSINGH/Minecraft1.20/actions/workflows/deploy.yml/badge.svg)](https://github.com/SHARVANKUMARSINGH/Minecraft1.20/actions/workflows/deploy.yml)
+
+### 🎮 Play Live in Browser:
+👉 **[https://sharvankumarsingh.github.io/Minecraft1.20/](https://sharvankumarsingh.github.io/Minecraft1.20/)**
 
 ![EaglercraftX 1.20.4 Screenshot Main Menu](https://raw.githubusercontent.com/ZixiaChen/Eaglercraft-1.20.4-Updated-/main/Screenshot%202024-05-20%2012.38.48%20PM.png)
+
+---
+
+## 📱 Progressive Web App (PWA) Features
+
+- **Installable**: Install directly to your home screen or desktop application dock.
+- **Fast Loading & Offline Cache**: Powered by a Service Worker that caches game assets for rapid loading.
+- **Full Screen & Standalone**: Runs in dedicated app window without browser URL bars.
+- **Multiplayer & Singleplayer**: Connect to WebSocket-based Eaglercraft servers or create local worlds.
+
+---
+
+## 🚀 Deployment & Local Running
+
+### Local HTTP Server
+Do not open `index.html` via `file://`. Run a local HTTP server:
+```bash
+python3 -m http.server 8000
+```
+Then navigate to `http://localhost:8000/`.
+
+### GitHub Pages Deployment
+This repository is configured with GitHub Actions to automatically deploy to GitHub Pages on every push to `main`.
+The workflow file is located at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+---
 
 ## ATTENTION MOJANG/MICROSOFT EMPLOYEE ASSIGNED TO STALK ME:
 
@@ -25,7 +54,3 @@
  - **Any portion of Mod Coder Pack and it's config files**
  - **Data that can be used alone to reconstruct portions of the game's source code**
  - **Code configured by default to allow users to play without owning a copy of Minecraft**
-
-# Making a client
-
-### Nothing here cuz I have no idea bud ;)
