@@ -9,7 +9,7 @@
 
 		<!-- PWA Manifest & App Config -->
 		<link rel="manifest" href="manifest.json" />
-		<meta name="theme-color" content="#c41e2a" />
+		<meta name="theme-color" content="#18181b" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -60,92 +60,7 @@
 				width: 100% !important;
 				height: 100% !important;
 				display: block;
-			}
-
-			/* ========================================================= */
-			/* 🔴 MOJANG STUDIOS 1.21 SPLASH / LOADING SCREEN             */
-			/* ========================================================= */
-			#loading_screen {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100vw;
-				height: 100vh;
-				background: linear-gradient(135deg, #c41e2a 0%, #991b1b 100%);
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				z-index: 99999;
-				transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-			}
-			#loading_screen.hidden {
-				opacity: 0;
-				pointer-events: none;
-			}
-			.mojang-logo-wrap {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				margin-bottom: 30px;
-			}
-			.mojang-badge {
-				font-size: 38px;
-				font-weight: 900;
-				letter-spacing: 6px;
-				color: #ffffff;
-				text-transform: uppercase;
-				display: flex;
-				align-items: center;
-				gap: 12px;
-			}
-			.mojang-sub {
-				font-size: 13px;
-				letter-spacing: 5px;
-				color: rgba(255, 255, 255, 0.85);
-				font-weight: 700;
-				margin-top: 4px;
-			}
-			.version-tag {
-				display: inline-block;
-				margin-top: 14px;
-				padding: 5px 14px;
-				background: rgba(0, 0, 0, 0.35);
-				border: 1px solid rgba(245, 158, 11, 0.6);
-				border-radius: 20px;
-				font-size: 13px;
-				font-weight: 700;
-				color: #fbbf24;
-				letter-spacing: 1px;
-			}
-			.progress-box {
-				width: 280px;
-				margin-top: 36px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 10px;
-			}
-			.progress-track {
-				width: 100%;
-				height: 8px;
-				background: rgba(0, 0, 0, 0.4);
-				border-radius: 4px;
-				overflow: hidden;
-				box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-			}
-			.progress-fill {
-				width: 15%;
-				height: 100%;
-				background: linear-gradient(90deg, #f59e0b, #fbbf24);
-				border-radius: 4px;
-				transition: width 0.3s ease;
-				box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
-			}
-			.loading-status {
-				font-size: 12px;
-				color: rgba(255, 255, 255, 0.75);
-				letter-spacing: 0.5px;
+				touch-action: none;
 			}
 
 			/* ========================================================= */
@@ -153,7 +68,7 @@
 			/* ========================================================= */
 			#hud_top {
 				position: fixed;
-				top: 12px;
+				top: 10px;
 				left: 12px;
 				right: 12px;
 				display: flex;
@@ -176,6 +91,7 @@
 				gap: 4px;
 				backdrop-filter: blur(8px);
 				box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+				pointer-events: auto;
 			}
 			.hud-mode-opt {
 				background: transparent;
@@ -215,7 +131,7 @@
 			}
 
 			/* ========================================================= */
-			/* 📱 ANDROID TOUCH CONTROLS OVERLAY                         */
+			/* 📱 ANDROID BEDROCK TOUCH CONTROLS                         */
 			/* ========================================================= */
 			#android_controls {
 				position: fixed;
@@ -233,8 +149,8 @@
 			/* Virtual Joystick (Left) */
 			#joystick_wrapper {
 				position: absolute;
-				bottom: 35px;
-				left: 35px;
+				bottom: 30px;
+				left: 28px;
 				width: 140px;
 				height: 140px;
 				pointer-events: auto;
@@ -243,19 +159,19 @@
 			#joystick_base {
 				width: 100%;
 				height: 100%;
-				background: radial-gradient(circle, rgba(24, 24, 27, 0.55) 0%, rgba(15, 15, 18, 0.75) 100%);
-				border: 2.5px solid rgba(255, 255, 255, 0.3);
+				background: radial-gradient(circle, rgba(24, 24, 27, 0.6) 0%, rgba(15, 15, 18, 0.8) 100%);
+				border: 2px solid rgba(255, 255, 255, 0.35);
 				border-radius: 50%;
 				position: relative;
 				box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
 				backdrop-filter: blur(4px);
 			}
-			/* Arrow guides inside joystick base */
 			.joy-arrow {
 				position: absolute;
-				color: rgba(255, 255, 255, 0.35);
+				color: rgba(255, 255, 255, 0.45);
 				font-size: 13px;
 				font-weight: 900;
+				user-select: none;
 			}
 			.joy-up { top: 6px; left: 50%; transform: translateX(-50%); }
 			.joy-down { bottom: 6px; left: 50%; transform: translateX(-50%); }
@@ -276,7 +192,7 @@
 				align-items: center;
 				justify-content: center;
 				pointer-events: none;
-				transition: transform 0.05s ease-out;
+				transition: transform 0.04s ease-out;
 			}
 			#joystick_knob::after {
 				content: '';
@@ -286,23 +202,12 @@
 				border-radius: 50%;
 			}
 
-			/* Right Touch Camera Look Zone */
-			#touch_look_zone {
-				position: absolute;
-				top: 55px;
-				right: 0;
-				width: 60vw;
-				bottom: 160px;
-				pointer-events: auto;
-				touch-action: none;
-			}
-
-			/* Right Action Buttons */
+			/* Right Action Buttons (Bedrock layout) */
 			#action_buttons {
 				position: absolute;
-				bottom: 30px;
-				right: 25px;
-				pointer-events: auto;
+				bottom: 25px;
+				right: 20px;
+				pointer-events: none;
 				display: grid;
 				grid-template-columns: repeat(3, 56px);
 				grid-template-rows: repeat(2, 56px);
@@ -311,7 +216,8 @@
 				justify-items: center;
 			}
 			.act-btn {
-				background: rgba(24, 24, 27, 0.72);
+				pointer-events: auto;
+				background: rgba(24, 24, 27, 0.75);
 				border: 2px solid rgba(255, 255, 255, 0.35);
 				border-radius: 50%;
 				color: #ffffff;
@@ -323,7 +229,7 @@
 				cursor: pointer;
 				box-shadow: 0 6px 18px rgba(0,0,0,0.45);
 				backdrop-filter: blur(6px);
-				transition: all 0.1s;
+				transition: transform 0.1s, background 0.1s, border-color 0.1s;
 				touch-action: none;
 			}
 			.act-btn span {
@@ -346,7 +252,7 @@
 				height: 66px;
 				grid-column: 3;
 				grid-row: 2;
-				border-color: rgba(255, 255, 255, 0.5);
+				border-color: rgba(255, 255, 255, 0.55);
 			}
 			#btn_attack {
 				width: 58px;
@@ -385,7 +291,7 @@
 				transform: translateX(-50%);
 				display: flex;
 				gap: 4px;
-				background: rgba(15, 15, 18, 0.8);
+				background: rgba(15, 15, 18, 0.85);
 				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-radius: 8px;
 				padding: 4px 6px;
@@ -393,9 +299,9 @@
 				backdrop-filter: blur(6px);
 			}
 			.hotbar-btn {
-				width: 30px;
+				width: 32px;
 				height: 32px;
-				background: rgba(39, 39, 42, 0.8);
+				background: rgba(39, 39, 42, 0.85);
 				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-radius: 4px;
 				color: #e4e4e7;
@@ -441,28 +347,11 @@
 		</style>
 	</head>
 	<body>
-		<!-- 🔴 1.21 MOJANG STUDIOS SPLASH / LOADING SCREEN -->
-		<div id="loading_screen">
-			<div class="mojang-logo-wrap">
-				<div class="mojang-badge">
-					<span>MOJANG</span>
-				</div>
-				<div class="mojang-sub">STUDIOS</div>
-				<div class="version-tag">⚔️ 1.21 TRICKY TRIALS</div>
-			</div>
-			<div class="progress-box">
-				<div class="progress-track">
-					<div id="loading_bar" class="progress-fill"></div>
-				</div>
-				<span id="loading_txt" class="loading-status">Loading game resources...</span>
-			</div>
-		</div>
-
 		<!-- 🎛️ TOP HUD & CONTROLS MODE SELECTOR -->
 		<div id="hud_top">
 			<!-- Mode switch: Android Mobile vs Desktop -->
 			<div class="hud-pill">
-				<button id="mode_android" class="hud-mode-opt active">📱 Mobile</button>
+				<button id="mode_android" class="hud-mode-opt">📱 Mobile</button>
 				<button id="mode_desktop" class="hud-mode-opt">💻 Desktop</button>
 			</div>
 
@@ -475,7 +364,7 @@
 			</div>
 		</div>
 
-		<!-- 📱 ANDROID TOUCH CONTROLS -->
+		<!-- 📱 ANDROID TOUCH CONTROLS (Bedrock Style) -->
 		<div id="android_controls">
 			<!-- Left Virtual Joystick -->
 			<div id="joystick_wrapper">
@@ -487,9 +376,6 @@
 					<div id="joystick_knob"></div>
 				</div>
 			</div>
-
-			<!-- Right Camera Pan Look Zone -->
-			<div id="touch_look_zone"></div>
 
 			<!-- Right Action Buttons -->
 			<div id="action_buttons">
@@ -529,7 +415,7 @@
 			</div>
 		</div>
 
-		<!-- 🎮 GAME CONTAINER -->
+		<!-- 🎮 GAME CONTAINER (WebGL Canvas directly interactive) -->
 		<div id="game_frame"></div>
 
 		<!-- 📲 PWA INSTALL PROMPT -->
@@ -610,18 +496,6 @@
 				const ev = new MouseEvent(type, {
 					button: button,
 					buttons: button === 0 ? 1 : (button === 2 ? 2 : 4),
-					bubbles: true,
-					cancelable: true
-				});
-				canvas.dispatchEvent(ev);
-			}
-
-			function sendMouseMove(movementX, movementY) {
-				const canvas = getGameCanvas();
-				if (!canvas) return;
-				const ev = new MouseEvent('mousemove', {
-					movementX: movementX,
-					movementY: movementY,
 					bubbles: true,
 					cancelable: true
 				});
@@ -716,70 +590,17 @@
 				}
 			}, { passive: false });
 
-			window.addEventListener('touchend', (e) => {
+			function onJoyEnd(e) {
 				if (joyTouchId === null) return;
 				for (let i = 0; i < e.changedTouches.length; i++) {
 					if (e.changedTouches[i].identifier === joyTouchId) {
 						resetJoystick();
-						break;
-					}
-				}
-			});
-			window.addEventListener('touchcancel', (e) => {
-				if (joyTouchId === null) return;
-				for (let i = 0; i < e.changedTouches.length; i++) {
-					if (e.changedTouches[i].identifier === joyTouchId) {
-						resetJoystick();
-						break;
-					}
-				}
-			});
-
-			/* ========================================================= */
-			/* 👁️ TOUCH CAMERA LOOK PAN                                  */
-			/* ========================================================= */
-			const lookZone = document.getElementById('touch_look_zone');
-			let lookTouchId = null;
-			let lastLookX = 0;
-			let lastLookY = 0;
-			const lookSensitivity = 1.35;
-
-			lookZone.addEventListener('touchstart', (e) => {
-				e.preventDefault();
-				if (lookTouchId !== null) return;
-				const t = e.changedTouches[0];
-				lookTouchId = t.identifier;
-				lastLookX = t.clientX;
-				lastLookY = t.clientY;
-			}, { passive: false });
-
-			lookZone.addEventListener('touchmove', (e) => {
-				if (lookTouchId === null) return;
-				for (let i = 0; i < e.changedTouches.length; i++) {
-					const t = e.changedTouches[i];
-					if (t.identifier === lookTouchId) {
-						e.preventDefault();
-						const dx = (t.clientX - lastLookX) * lookSensitivity;
-						const dy = (t.clientY - lastLookY) * lookSensitivity;
-						lastLookX = t.clientX;
-						lastLookY = t.clientY;
-						sendMouseMove(dx, dy);
-						break;
-					}
-				}
-			}, { passive: false });
-
-			function endLook(e) {
-				if (lookTouchId === null) return;
-				for (let i = 0; i < e.changedTouches.length; i++) {
-					if (e.changedTouches[i].identifier === lookTouchId) {
-						lookTouchId = null;
 						break;
 					}
 				}
 			}
-			lookZone.addEventListener('touchend', endLook);
-			lookZone.addEventListener('touchcancel', endLook);
+			window.addEventListener('touchend', onJoyEnd);
+			window.addEventListener('touchcancel', onJoyEnd);
 
 			/* ========================================================= */
 			/* ⚔️ ACTION BUTTONS BINDINGS                                */
@@ -888,11 +709,28 @@
 			});
 
 			/* ========================================================= */
-			/* 📱 / 💻 CONTROLS MODE SWITCHER                            */
+			/* 📱 / 💻 AUTOMATIC LANDSCAPE-SAFE DEVICE DETECTION        */
 			/* ========================================================= */
 			const modeAndroidBtn = document.getElementById('mode_android');
 			const modeDesktopBtn = document.getElementById('mode_desktop');
 			const touchOverlay = document.getElementById('android_controls');
+
+			function isMobileDevice() {
+				// 1. Check user-agent (Android is ALWAYS in userAgent even in landscape mode!)
+				const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+				if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua)) {
+					return true;
+				}
+				// 2. Check for iPadOS on desktop Safari
+				if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+					return true;
+				}
+				// 3. Pointer coarse match & touch points
+				if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && navigator.maxTouchPoints > 0) {
+					return true;
+				}
+				return false;
+			}
 
 			function setControlsMode(mode) {
 				if (mode === 'android') {
@@ -912,51 +750,18 @@
 			modeAndroidBtn?.addEventListener('click', () => setControlsMode('android'));
 			modeDesktopBtn?.addEventListener('click', () => setControlsMode('desktop'));
 
-			// Auto-detect mode based on touch capability or saved preference
+			// Initialize controls mode: use saved preference, or accurately detect mobile (including Android landscape)
 			const savedMode = localStorage.getItem('mc_controls_mode');
 			if (savedMode) {
 				setControlsMode(savedMode);
 			} else {
-				const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-				setControlsMode(isTouchDevice ? 'android' : 'desktop');
+				setControlsMode(isMobileDevice() ? 'android' : 'desktop');
 			}
 
 			/* ========================================================= */
 			/* 🚀 MINECRAFT 1.21 ENGINE INITIALIZATION                  */
 			/* ========================================================= */
 			window.addEventListener("load", () => {
-				const loadingBar = document.getElementById('loading_bar');
-				const loadingTxt = document.getElementById('loading_txt');
-				const splashScreen = document.getElementById('loading_screen');
-
-				// Animate loading bar progress
-				let progress = 15;
-				const progressInterval = setInterval(() => {
-					progress += Math.floor(Math.random() * 15) + 5;
-					if (progress > 85) progress = 85;
-					if (loadingBar) loadingBar.style.width = `${progress}%`;
-					if (loadingTxt) {
-						if (progress > 60) loadingTxt.innerText = "Initializing 1.21 Tricky Trials world...";
-						else if (progress > 30) loadingTxt.innerText = "Loading textures & shaders...";
-					}
-				}, 200);
-
-				// Observer to hide splash screen as soon as Minecraft canvas renders
-				const observer = new MutationObserver(() => {
-					const canvas = document.querySelector('#game_frame canvas');
-					if (canvas) {
-						clearInterval(progressInterval);
-						if (loadingBar) loadingBar.style.width = '100%';
-						if (loadingTxt) loadingTxt.innerText = "Ready!";
-						setTimeout(() => {
-							splashScreen?.classList.add('hidden');
-							setTimeout(() => splashScreen?.remove(), 800);
-						}, 350);
-						observer.disconnect();
-					}
-				});
-				observer.observe(document.getElementById('game_frame'), { childList: true, subtree: true });
-
 				if (document.location.href.startsWith("file:")) {
 					alert("Please run via HTTP server (e.g. python3 -m http.server 8000)");
 				} else {
