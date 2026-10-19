@@ -33,13 +33,10 @@ The workflow file is located at [`.github/workflows/deploy.yml`](.github/workflo
 
 ---
 
-## 👥 Contributors & Credits
+## 👥 Credits
 
-| Contributor | Role | Profile |
-| :--- | :--- | :--- |
-| **Asher Mayzak** | Upstream Client & Repository Author | [@XxFluffyAsherxX](https://github.com/XxFluffyAsherxX) |
-| **Sharvan Kumar Singh** | PWA Integration, Custom Icon & GitHub Pages Deployment | [@SHARVANKUMARSINGH](https://github.com/SHARVANKUMARSINGH) |
-| **lax1dude & ayunami2000** | Eaglercraft Project Creators | Community |
+- **Sharvan Kumar Singh** ([@SHARVANKUMARSINGH](https://github.com/SHARVANKUMARSINGH)) - PWA Integration, Custom Icon & GitHub Pages Deployment
+- **lax1dude & ayunami2000** - Eaglercraft Project Creators
 
 ---
 
